@@ -9,5 +9,5 @@ export const createSearchTemplate = () => {
         />
         <label class="visually-hidden" for="search__input">Search</label>
       </section>
-  `;
+  `.trim();
 };
