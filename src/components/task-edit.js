@@ -1,18 +1,45 @@
-export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) => {
-  const isRepeat = Object.keys(repeatingDays).some((day) => repeatingDays[day]);
-  return `
-      <article class="card card--edit card--${color} ${isRepeat ? `card--repeat` : ``}">
+import {createElement} from "../utils";
+
+export default class TaskEdit {
+  constructor({description, dueDate, tags, color, repeatingDays, isArchive, isFavorite}) {
+    this._description = description;
+    this._dueDate = new Date(dueDate);
+    this._tags = tags;
+    this._color = color;
+    this._element = null;
+    this._repeatingDays = repeatingDays;
+
+    this._isArchive = isArchive;
+    this._isFavorite = isFavorite;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    const isRepeat = Object.values(this._repeatingDays).some((it) => it === true);
+    return `
+      <article class="card card--edit card--${this._color} ${isRepeat ? `card--repeat` : ``}">
         <form class="card__form" method="get">
           <div class="card__inner">
             <div class="card__control">
               <button 
                 type="button" 
-                class="card__btn card__btn--archive ${isArchive ? `card__btn--disabled` : ``}">
+                class="card__btn card__btn--archive ${this._isArchive ? `card__btn--disabled` : ``}">
                 archive
               </button>
               <button
                 type="button"
-                class="card__btn card__btn--favorites ${isFavorite ? `card__btn--disabled` : ``}"
+                class="card__btn card__btn--favorites ${this._isFavorite ? `card__btn--disabled` : ``}"
               >
                 favorites
               </button>
@@ -30,7 +57,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
                   class="card__text"
                   placeholder="Start typing your text here..."
                   name="text"
-                >${description}</textarea>
+                >${this._description}</textarea>
               </label>
             </div>
   
@@ -48,7 +75,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
                         type="text"
                         placeholder="23 September"
                         name="date"
-                        value="${new Date(dueDate).toDateString()}"
+                        value="${new Date(this._dueDate).toDateString()}"
                       />
                     </label>
                   </fieldset>
@@ -59,7 +86,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
   
                   <fieldset class="card__repeat-days" ${isRepeat ? `` : `disabled`}>
                     <div class="card__repeat-days-inner">
-                      ${Object.entries(repeatingDays).map(([name, repeat]) => `<input
+                      ${Object.entries(this._repeatingDays).map(([name, repeat]) => `<input
                           class="visually-hidden card__repeat-day-input"
                           type="checkbox"
                           id="repeat-${name}-1"
@@ -76,7 +103,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
   
                 <div class="card__hashtag">
                   <div class="card__hashtag-list">
-                    ${Array.from(tags).map((tag) => `<span class="card__hashtag-inner">
+                    ${Array.from(this._tags).map((tag) => `<span class="card__hashtag-inner">
                           <input
                             type="hidden"
                             name="hashtag"
@@ -112,7 +139,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
                     class="card__color-input card__color-input--black visually-hidden"
                     name="color"
                     value="black"
-                    ${color === `black` ? `checked` : ``}
+                    ${this._color === `black` ? `checked` : ``}
                   />
                   <label
                     for="color-black-1"
@@ -125,7 +152,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
                     class="card__color-input card__color-input--yellow visually-hidden"
                     name="color"
                     value="yellow"
-                    ${color === `yellow` ? `checked` : ``}
+                    ${this._color === `yellow` ? `checked` : ``}
                   />
                   <label
                     for="color-yellow-1"
@@ -138,7 +165,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
                     class="card__color-input card__color-input--blue visually-hidden"
                     name="color"
                     value="blue"
-                    ${color === `blue` ? `checked` : ``}
+                    ${this._color === `blue` ? `checked` : ``}
                   />
                   <label
                     for="color-blue-1"
@@ -151,7 +178,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
                     class="card__color-input card__color-input--green visually-hidden"
                     name="color"
                     value="green"
-                    ${color === `green` ? `checked` : ``}
+                    ${this._color === `green` ? `checked` : ``}
                   />
                   <label
                     for="color-green-1"
@@ -164,7 +191,7 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
                     class="card__color-input card__color-input--pink visually-hidden"
                     name="color"
                     value="pink"
-                    ${color === `pink` ? `checked` : ``}
+                    ${this._color === `pink` ? `checked` : ``}
                   />
                   <label
                     for="color-pink-1"
@@ -176,11 +203,12 @@ export const createTaskEditTemplate = ({description, dueDate, repeatingDays, tag
             </div>
   
             <div class="card__status-btns">
-              <button class="card__save" type="submit">save</button>
+              <button class="card__save js-card-save" type="submit">save</button>
               <button class="card__delete" type="button">delete</button>
             </div>
           </div>
         </form>
       </article>
-  `.trim();
-};
+    `.trim();
+  }
+}
