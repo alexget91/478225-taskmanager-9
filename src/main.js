@@ -13,6 +13,7 @@ const TASKS_PER_PAGE = 8;
 const MIN_TASK_COUNT = 0;
 const MAX_TASK_COUNT = 30;
 
+
 const showMoreTasks = (tasks) => {
   tasks.splice(0, TASKS_PER_PAGE).forEach((task) => renderTask(task));
 
