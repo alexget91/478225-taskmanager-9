@@ -7,7 +7,7 @@ export default class LoadMoreButton extends AbstractComponent {
     `.trim();
   }
 
-  hide() {
-    this._element.style.display = `none`;
+  toggleShow(show) {
+    this._element.style.display = show ? `` : `none`;
   }
 }
