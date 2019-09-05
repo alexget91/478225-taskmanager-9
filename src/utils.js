@@ -3,6 +3,11 @@ export const Position = {
   BEFOREEND: `beforeend`
 };
 
+export const Key = {
+  ESCAPE_IE: `Escape`,
+  ESCAPE: `Esc`,
+};
+
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
