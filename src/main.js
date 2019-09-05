@@ -18,6 +18,4 @@ render(siteMainElement.querySelector(`.js-main-control`), new SiteMenu().getElem
 render(siteMainElement, new Search().getElement(), Position.BEFOREEND);
 render(siteMainElement, new Filter(getFilters(tasks)).getElement(), Position.BEFOREEND);
 
-if (tasks.length) {
-  new BoardController(siteMainElement, tasks).init();
-}
+new BoardController(siteMainElement, tasks).init();

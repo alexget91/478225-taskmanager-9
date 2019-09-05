@@ -13,23 +13,26 @@ export default class BoardController {
     this._container = container;
     this._tasks = tasks;
     this._board = new Board();
-    this._taskList = new TaskList(this._tasks);
+    this._taskList = new TaskList(this._tasks.length);
     this._loadMoreButton = null;
   }
 
   init() {
     render(this._container, this._board.getElement(), Position.BEFOREEND);
-    render(this._board.getElement(), new Sorting().getElement(), Position.AFTERBEGIN);
     render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
 
-    this._loadMoreButton = new LoadMoreButton();
-    render(this._board.getElement(), this._loadMoreButton.getElement(), Position.BEFOREEND);
+    if (this._tasks.length) {
+      render(this._board.getElement(), new Sorting().getElement(), Position.AFTERBEGIN);
 
-    this._loadMoreButton.getElement().addEventListener(`click`, () => {
+      this._loadMoreButton = new LoadMoreButton();
+      render(this._board.getElement(), this._loadMoreButton.getElement(), Position.BEFOREEND);
+
+      this._loadMoreButton.getElement().addEventListener(`click`, () => {
+        this._showMoreTasks();
+      });
+
       this._showMoreTasks();
-    });
-
-    this._showMoreTasks();
+    }
   }
 
   _showMoreTasks() {
