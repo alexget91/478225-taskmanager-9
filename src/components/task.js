@@ -4,7 +4,7 @@ export default class Task extends AbstractComponent {
   constructor({description, dueDate, tags, color, repeatingDays, isArchive, isFavorite}) {
     super();
     this._description = description;
-    this._dueDate = new Date(dueDate);
+    this._dueDate = dueDate ? new Date(dueDate) : null;
     this._tags = tags;
     this._color = color;
     this._repeatingDays = repeatingDays;
@@ -14,11 +14,13 @@ export default class Task extends AbstractComponent {
   }
 
   getTemplate() {
+    const isRepeat = Object.values(this._repeatingDays).some((it) => it === true);
+
     return `
       <article 
-        class="card card--${this._color} ${Object.values(this._repeatingDays).some((it) => it === true) ? `card--repeat` : `` }
-            ${new Date().setHours(0, 0, 0, 0) > new Date(this._dueDate).setHours(0, 0, 0, 0) ? `card--deadline` : ``}">
-        <div class="card__form">
+        class="card card--${this._color} ${isRepeat ? `card--repeat` : `` }
+            ${this._dueDate && (new Date().setHours(0, 0, 0, 0) > new Date(this._dueDate).setHours(0, 0, 0, 0)) ? `card--deadline` : ``}">
+        <div class="card__form js-card-form">
           <div class="card__inner">
             <div class="card__control">
               <button type="button" class="card__btn card__btn--edit js-card-edit">
@@ -26,12 +28,12 @@ export default class Task extends AbstractComponent {
               </button>
               <button
                 type="button"
-                class="card__btn card__btn--archive ${this._isArchive ? `card__btn--disabled` : ``}">
+                class="card__btn card__btn--archive ${this._isArchive ? `card__btn--disabled` : ``} js-card-archive">
                 archive
               </button>
               <button
                 type="button"
-                class="card__btn card__btn--favorites ${this._isFavorite ? `card__btn--disabled` : ``}"
+                class="card__btn card__btn--favorites ${this._isFavorite ? `card__btn--disabled` : ``} js-card-favorites"
               >
                 favorites
               </button>
@@ -52,7 +54,7 @@ export default class Task extends AbstractComponent {
                 <div class="card__dates">
                   <div class="card__date-deadline">
                     <p class="card__input-deadline-wrap">
-                      <span class="card__date">${new Date(this._dueDate).toDateString()}</span>
+                      <span class="card__date">${this._dueDate ? new Date(this._dueDate).toDateString() : ``}</span>
 <!--                      <span class="card__time">11:15 PM</span>-->
                     </p>
                   </div>

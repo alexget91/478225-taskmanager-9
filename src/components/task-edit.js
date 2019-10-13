@@ -1,13 +1,14 @@
 import AbstractComponent from "./abstract-component";
+import Hashtag from "./hashtag";
 
 export default class TaskEdit extends AbstractComponent {
   constructor({description, dueDate, tags, color, repeatingDays, isArchive, isFavorite}) {
     super();
     this._description = description;
-    this._dueDate = new Date(dueDate);
-    this._tags = tags;
+    this._dueDate = dueDate ? new Date(dueDate) : null;
     this._color = color;
     this._repeatingDays = repeatingDays;
+    this._tags = Array.from(tags).map((tag) => new Hashtag(tag));
 
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
@@ -15,19 +16,20 @@ export default class TaskEdit extends AbstractComponent {
 
   getTemplate() {
     const isRepeat = Object.values(this._repeatingDays).some((it) => it === true);
+
     return `
       <article class="card card--edit card--${this._color} ${isRepeat ? `card--repeat` : ``}">
-        <form class="card__form" method="get">
+        <form class="card__form js-card-form" method="get">
           <div class="card__inner">
             <div class="card__control">
               <button 
                 type="button" 
-                class="card__btn card__btn--archive ${this._isArchive ? `card__btn--disabled` : ``}">
+                class="card__btn card__btn--archive ${this._isArchive ? `card__btn--disabled` : ``} js-card-archive">
                 archive
               </button>
               <button
                 type="button"
-                class="card__btn card__btn--favorites ${this._isFavorite ? `card__btn--disabled` : ``}"
+                class="card__btn card__btn--favorites ${this._isFavorite ? `card__btn--disabled` : ``} js-card-favorites"
               >
                 favorites
               </button>
@@ -52,27 +54,31 @@ export default class TaskEdit extends AbstractComponent {
             <div class="card__settings">
               <div class="card__details">
                 <div class="card__dates">
-                  <button class="card__date-deadline-toggle" type="button">
-                    date: <span class="card__date-status">${isRepeat ? `no` : `yes`}</span>
+                  <button class="card__date-deadline-toggle js-date-deadline-toggle" type="button">
+                    date: <span class="card__date-status js-date-deadline-status" data-yes="yes" data-no="no">
+                        ${this._dueDate ? `yes` : `no`}
+                    </span>
                   </button>
   
-                  <fieldset class="card__date-deadline" ${isRepeat ? `disabled` : ``}>
+                   <fieldset class="card__date-deadline js-date-deadline-fieldset" ${this._dueDate ? `` : `disabled`}> 
                     <label class="card__input-deadline-wrap">
                       <input
                         class="card__date"
                         type="text"
                         placeholder="23 September"
                         name="date"
-                        value="${new Date(this._dueDate).toDateString()}"
+                        value="${this._dueDate ? new Date(this._dueDate).toDateString() : ``}"
                       />
                     </label>
                   </fieldset>
   
-                  <button class="card__repeat-toggle" type="button">
-                    repeat:<span class="card__repeat-status">${isRepeat ? `yes` : `no`}</span>
+                  <button class="card__repeat-toggle js-repeat-toggle" type="button">
+                    repeat:<span class="card__repeat-status js-repeat-status" data-yes="yes" data-no="no">
+                        ${isRepeat ? `yes` : `no`}
+                    </span>
                   </button>
   
-                  <fieldset class="card__repeat-days" ${isRepeat ? `` : `disabled`}>
+                  <fieldset class="card__repeat-days js-repeat-fieldset" ${isRepeat ? `` : `disabled`}>
                     <div class="card__repeat-days-inner">
                       ${Object.entries(this._repeatingDays).map(([name, repeat]) => `<input
                           class="visually-hidden card__repeat-day-input"
@@ -90,27 +96,14 @@ export default class TaskEdit extends AbstractComponent {
                 </div>
   
                 <div class="card__hashtag">
-                  <div class="card__hashtag-list">
-                    ${Array.from(this._tags).map((tag) => `<span class="card__hashtag-inner">
-                          <input
-                            type="hidden"
-                            name="hashtag"
-                            value="repeat"
-                            class="card__hashtag-hidden-input"
-                          />
-                          <p class="card__hashtag-name">
-                            #${tag}
-                          </p>
-                          <button type="button" class="card__hashtag-delete">
-                            delete
-                          </button>
-                        </span>`).join(``)}
+                  <div class="card__hashtag-list js-hashtag-list">
+                    ${this._tags.map((tag) => tag.getTemplate()).join(``)}
                   </div>
   
                   <label>
                     <input
                       type="text"
-                      class="card__hashtag-input"
+                      class="card__hashtag-input js-hashtag-input"
                       name="hashtag-input"
                       placeholder="Type new hashtag here"
                     />
@@ -124,7 +117,7 @@ export default class TaskEdit extends AbstractComponent {
                   <input
                     type="radio"
                     id="color-black-1"
-                    class="card__color-input card__color-input--black visually-hidden"
+                    class="card__color-input card__color-input--black visually-hidden js-color-input"
                     name="color"
                     value="black"
                     ${this._color === `black` ? `checked` : ``}
@@ -137,7 +130,7 @@ export default class TaskEdit extends AbstractComponent {
                   <input
                     type="radio"
                     id="color-yellow-1"
-                    class="card__color-input card__color-input--yellow visually-hidden"
+                    class="card__color-input card__color-input--yellow visually-hidden js-color-input"
                     name="color"
                     value="yellow"
                     ${this._color === `yellow` ? `checked` : ``}
@@ -150,7 +143,7 @@ export default class TaskEdit extends AbstractComponent {
                   <input
                     type="radio"
                     id="color-blue-1"
-                    class="card__color-input card__color-input--blue visually-hidden"
+                    class="card__color-input card__color-input--blue visually-hidden js-color-input"
                     name="color"
                     value="blue"
                     ${this._color === `blue` ? `checked` : ``}
@@ -163,7 +156,7 @@ export default class TaskEdit extends AbstractComponent {
                   <input
                     type="radio"
                     id="color-green-1"
-                    class="card__color-input card__color-input--green visually-hidden"
+                    class="card__color-input card__color-input--green visually-hidden js-color-input"
                     name="color"
                     value="green"
                     ${this._color === `green` ? `checked` : ``}
@@ -176,7 +169,7 @@ export default class TaskEdit extends AbstractComponent {
                   <input
                     type="radio"
                     id="color-pink-1"
-                    class="card__color-input card__color-input--pink visually-hidden"
+                    class="card__color-input card__color-input--pink visually-hidden js-color-input"
                     name="color"
                     value="pink"
                     ${this._color === `pink` ? `checked` : ``}
