@@ -3,6 +3,8 @@ import Task from "../components/task";
 import TaskEdit from "../components/task-edit";
 import Hashtag from "../components/hashtag";
 
+const MAX_HASHTAG_COUNT = 5;
+
 export default class TaskController {
   constructor(container, data, onDataChange, onChangeView) {
     this._container = container;
@@ -11,16 +13,24 @@ export default class TaskController {
     this._onChangeView = onChangeView;
     this._taskView = new Task(data);
     this._taskEdit = new TaskEdit(data);
+    this._hashtagContainer = null;
+    this._hashtagInput = null;
   }
 
-  renderTag(container, tag) {
+  _checkTagsLimit() {
+    this._hashtagInput.toggleAttribute(`disabled`, this._hashtagContainer.childNodes.length >= MAX_HASHTAG_COUNT);
+  }
+
+  _renderTag(container, tag) {
     const tagElement = new Hashtag(tag).getElement();
 
     render(container, tagElement, Position.BEFOREEND);
+    this._checkTagsLimit();
 
     tagElement.querySelector(`.js-hashtag-delete`)
       .addEventListener(`click`, (evt) => {
         evt.target.parentNode.remove();
+        this._checkTagsLimit();
       });
   }
 
@@ -55,10 +65,10 @@ export default class TaskController {
         this._onDataChange(entry, this._data);
       });
 
-    const hashtagContainer = this._taskEdit.getElement().querySelector(`.js-hashtag-list`);
-    const hashtagInput = this._taskEdit.getElement().querySelector(`.js-hashtag-input`);
+    this._hashtagContainer = this._taskEdit.getElement().querySelector(`.js-hashtag-list`);
+    this._hashtagInput = this._taskEdit.getElement().querySelector(`.js-hashtag-input`);
 
-    this._data.tags.forEach((tag) => this.renderTag(hashtagContainer, tag));
+    this._data.tags.forEach((tag) => this._renderTag(this._hashtagContainer, tag));
 
     this._taskEdit.getElement()
       .querySelector(`.js-card-favorites`)
@@ -116,11 +126,14 @@ export default class TaskController {
         });
       });
 
-    hashtagInput.addEventListener(`keydown`, (evt) => {
+    this._hashtagInput.addEventListener(`keydown`, (evt) => {
       if (evt.key === Key.ENTER || evt.key === Key.SPACE) {
         evt.preventDefault();
-        this.renderTag(hashtagContainer, hashtagInput.value);
-        hashtagInput.value = ``;
+
+        if (this._hashtagInput.value.length >= this._hashtagInput.minLength) {
+          this._renderTag(this._hashtagContainer, this._hashtagInput.value);
+          this._hashtagInput.value = ``;
+        }
       }
     });
 

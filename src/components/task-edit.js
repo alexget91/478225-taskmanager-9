@@ -102,6 +102,8 @@ export default class TaskEdit extends AbstractComponent {
                       class="card__hashtag-input js-hashtag-input"
                       name="hashtag-input"
                       placeholder="Type new hashtag here"
+                      minlength="2"
+                      maxlength="15"
                     />
                   </label>
                 </div>
