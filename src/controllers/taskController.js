@@ -13,6 +13,17 @@ export default class TaskController {
     this._taskEdit = new TaskEdit(data);
   }
 
+  renderTag(container, tag) {
+    const tagElement = new Hashtag(tag).getElement();
+
+    render(container, tagElement, Position.BEFOREEND);
+
+    tagElement.querySelector(`.js-hashtag-delete`)
+      .addEventListener(`click`, (evt) => {
+        evt.target.parentNode.remove();
+      });
+  }
+
   init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === Key.ESCAPE || evt.key === Key.ESCAPE_IE) {
@@ -44,6 +55,10 @@ export default class TaskController {
         this._onDataChange(entry, this._data);
       });
 
+    const hashtagContainer = this._taskEdit.getElement().querySelector(`.js-hashtag-list`);
+    const hashtagInput = this._taskEdit.getElement().querySelector(`.js-hashtag-input`);
+
+    this._data.tags.forEach((tag) => this.renderTag(hashtagContainer, tag));
 
     this._taskEdit.getElement()
       .querySelector(`.js-card-favorites`)
@@ -101,23 +116,13 @@ export default class TaskController {
         });
       });
 
-    const hashtagInput = this._taskEdit.getElement().querySelector(`.js-hashtag-input`);
-
     hashtagInput.addEventListener(`keydown`, (evt) => {
       if (evt.key === Key.ENTER || evt.key === Key.SPACE) {
         evt.preventDefault();
-        this._taskEdit.getElement().querySelector(`.js-hashtag-list`).append(new Hashtag(hashtagInput.value).getElement());
+        this.renderTag(hashtagContainer, hashtagInput.value);
         hashtagInput.value = ``;
       }
     });
-
-    this._taskEdit.getElement()
-      .querySelectorAll(`.js-hashtag-delete`).forEach((tagDelete) => {
-        tagDelete.addEventListener(`click`, (evt) => {
-          evt.target.parentNode.remove();
-        });
-      });
-
 
     this._taskEdit.getElement()
       .querySelector(`.js-card-save`)

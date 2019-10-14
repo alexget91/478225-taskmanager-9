@@ -1,14 +1,12 @@
 import AbstractComponent from "./abstract-component";
-import Hashtag from "./hashtag";
 
 export default class TaskEdit extends AbstractComponent {
-  constructor({description, dueDate, tags, color, repeatingDays, isArchive, isFavorite}) {
+  constructor({description, dueDate, color, repeatingDays, isArchive, isFavorite}) {
     super();
     this._description = description;
     this._dueDate = dueDate ? new Date(dueDate) : null;
     this._color = color;
     this._repeatingDays = repeatingDays;
-    this._tags = Array.from(tags).map((tag) => new Hashtag(tag));
 
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
@@ -96,9 +94,7 @@ export default class TaskEdit extends AbstractComponent {
                 </div>
   
                 <div class="card__hashtag">
-                  <div class="card__hashtag-list js-hashtag-list">
-                    ${this._tags.map((tag) => tag.getTemplate()).join(``)}
-                  </div>
+                  <div class="card__hashtag-list js-hashtag-list"></div>
   
                   <label>
                     <input
