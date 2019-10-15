@@ -6,7 +6,7 @@ import Hashtag from "../components/hashtag";
 const MAX_HASHTAG_COUNT = 5;
 
 export default class TaskController {
-  constructor(container, data, onDataChange, onChangeView) {
+  constructor(container, data, onDataChange, onChangeView, elementToReplace) {
     this._container = container;
     this._data = data;
     this._onDataChange = onDataChange;
@@ -15,6 +15,7 @@ export default class TaskController {
     this._taskEdit = new TaskEdit(data);
     this._hashtagContainer = null;
     this._hashtagInput = null;
+    this._elementToReplace = elementToReplace;
   }
 
   _checkTagsLimit() {
@@ -54,7 +55,7 @@ export default class TaskController {
       .addEventListener(`click`, () => {
         const entry = this._data;
         entry.isFavorite = !this._data.isFavorite;
-        this._onDataChange(entry, this._data);
+        this._onDataChange(entry, this._data, this._taskView.getElement());
       });
 
     this._taskView.getElement()
@@ -62,7 +63,7 @@ export default class TaskController {
       .addEventListener(`click`, () => {
         const entry = this._data;
         entry.isArchive = !this._data.isArchive;
-        this._onDataChange(entry, this._data);
+        this._onDataChange(entry, this._data, this._taskView.getElement());
       });
 
     this._hashtagContainer = this._taskEdit.getElement().querySelector(`.js-hashtag-list`);
@@ -141,7 +142,6 @@ export default class TaskController {
       .querySelector(`.js-card-save`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
 
         const formData = new FormData(this._taskEdit.getElement().querySelector(`.js-card-form`));
         const dueDate = formData.get(`date`);
@@ -166,11 +166,16 @@ export default class TaskController {
           isFavorite: this._taskEdit.getElement().querySelector(`.js-card-favorites`).classList.contains(`card__btn--disabled`)
         };
 
-        this._onDataChange(entry, this._data);
+        this._onDataChange(entry, this._data, this._taskEdit.getElement());
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
-    render(this._container.getElement(), this._taskView.getElement(), Position.BEFOREEND);
+    if (this._elementToReplace) {
+      this._container.getElement().replaceChild(this._taskView.getElement(), this._elementToReplace);
+
+    } else {
+      render(this._container.getElement(), this._taskView.getElement(), Position.BEFOREEND);
+    }
   }
 }

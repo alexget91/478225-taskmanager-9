@@ -1,6 +1,6 @@
 import Board from "../components/board";
 import TaskList from "../components/task-list";
-import {Position, render, unrender} from "../utils";
+import {Position, render} from "../utils";
 import LoadMoreButton from "../components/load-more-button";
 import Sort from "../components/sort";
 import TaskController from "./taskController";
@@ -43,22 +43,14 @@ export default class BoardController {
     this._loadMoreButton.toggleShow(this._firstTask < this._tasks.length);
   }
 
-  _renderBoard() {
-    unrender(this._taskList.getElement());
-    this._taskList.removeElement();
-    render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
-    this._tasks.forEach((task) => this._renderTask(task));
+  _renderTask(task, elementToReplace) {
+    new TaskController(this._taskList, task, this._onDataChange, null, elementToReplace).init();
   }
 
-  _renderTask(task) {
-    const taskController = new TaskController(this._taskList, task, this._onDataChange);
-
-    taskController.init();
-  }
-
-  _onDataChange(newData, oldData) {
+  _onDataChange(newData, oldData, elementToReplace) {
     this._tasks[this._tasks.findIndex((it) => it === oldData)] = newData;
-    this._renderBoard();
+    this._tasksDefault[this._tasksDefault.findIndex((it) => it === oldData)] = newData;
+    this._renderTask(newData, elementToReplace);
   }
 
   _onSortLinkClick(evt) {
