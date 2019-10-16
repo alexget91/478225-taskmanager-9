@@ -35,10 +35,18 @@ export default class TaskController {
       });
   }
 
+  setDefaultView() {
+    if (this._container.getElement().contains(this._taskEdit.getElement())) {
+      this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+    }
+  }
+
   init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === Key.ESCAPE || evt.key === Key.ESCAPE_IE) {
-        this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+        if (this._container.getElement().contains(this._taskEdit.getElement())) {
+          this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+        }
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -46,6 +54,7 @@ export default class TaskController {
     this._taskView.getElement()
       .querySelector(`.js-card-edit`)
       .addEventListener(`click`, () => {
+        this._onChangeView();
         this._container.getElement().replaceChild(this._taskEdit.getElement(), this._taskView.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });

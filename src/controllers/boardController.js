@@ -18,7 +18,9 @@ export default class BoardController {
     this._sort = new Sort();
     this._loadMoreButton = null;
 
+    this._subscriptions = [];
     this._onDataChange = this._onDataChange.bind(this);
+    this._onChangeView = this._onChangeView.bind(this);
   }
 
   init() {
@@ -44,7 +46,14 @@ export default class BoardController {
   }
 
   _renderTask(task, elementToReplace) {
-    new TaskController(this._taskList, task, this._onDataChange, null, elementToReplace).init();
+    const taskController = new TaskController(this._taskList, task, this._onDataChange, this._onChangeView, elementToReplace);
+
+    taskController.init();
+    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
+  }
+
+  _onChangeView() {
+    this._subscriptions.forEach((subscription) => subscription());
   }
 
   _onDataChange(newData, oldData, elementToReplace) {
