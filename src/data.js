@@ -1,36 +1,40 @@
-export const getTask = () => ({
-  description: [
-    `Изучить теорию`,
-    `Сделать домашку`,
-    `Пройти интенсив на соточку`,
-  ][Math.floor(Math.random() * 3)],
-  dueDate: Date.now() + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000 * (Math.round(Math.random()) ? 1 : -1),
-  tags: new Set(new Array(Math.floor(Math.random() * 4)).fill(``).map(() => [
-    `homework`,
-    `theory`,
-    `practice`,
-    `intensive`,
-    `keks`,
-  ][Math.floor(Math.random() * 5)])),
-  repeatingDays: {
-    'mo': Boolean(Math.round(Math.random())),
-    'tu': Boolean(Math.round(Math.random())),
-    'we': Boolean(Math.round(Math.random())),
-    'th': Boolean(Math.round(Math.random())),
-    'fr': Boolean(Math.round(Math.random())),
-    'sa': Boolean(Math.round(Math.random())),
-    'su': Boolean(Math.round(Math.random())),
-  },
-  color: [
-    `black`,
-    `yellow`,
-    `blue`,
-    `green`,
-    `pink`,
-  ][Math.floor(Math.random() * 5)],
-  isFavorite: Boolean(Math.round(Math.random())),
-  isArchive: Boolean(Math.round(Math.random())),
-});
+export const getTask = () => {
+  const isRepeat = Boolean(Math.round(Math.random()));
+
+  return {
+    description: [
+      `Изучить теорию`,
+      `Сделать домашку`,
+      `Пройти интенсив на соточку`,
+    ][Math.floor(Math.random() * 3)],
+    dueDate: isRepeat ? null : Date.now() + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000 * (Math.round(Math.random()) ? 1 : -1),
+    tags: new Set(new Array(Math.floor(Math.random() * 4)).fill(``).map(() => [
+      `homework`,
+      `theory`,
+      `practice`,
+      `intensive`,
+      `keks`,
+    ][Math.floor(Math.random() * 5)])),
+    repeatingDays: {
+      'mo': isRepeat ? Boolean(Math.round(Math.random())) : false,
+      'tu': isRepeat ? Boolean(Math.round(Math.random())) : false,
+      'we': isRepeat ? Boolean(Math.round(Math.random())) : false,
+      'th': isRepeat ? Boolean(Math.round(Math.random())) : false,
+      'fr': isRepeat ? Boolean(Math.round(Math.random())) : false,
+      'sa': isRepeat ? Boolean(Math.round(Math.random())) : false,
+      'su': isRepeat ? Boolean(Math.round(Math.random())) : false,
+    },
+    color: [
+      `black`,
+      `yellow`,
+      `blue`,
+      `green`,
+      `pink`,
+    ][Math.floor(Math.random() * 5)],
+    isFavorite: Boolean(Math.round(Math.random())),
+    isArchive: Boolean(Math.round(Math.random())),
+  };
+};
 
 export const getFilters = (tasks) => [
   {

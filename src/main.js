@@ -3,7 +3,7 @@ import Search from './components/search';
 import Filter from './components/filter';
 import {getTask, getFilters} from './data';
 import {Position, render} from "./utils";
-import BoardController from "./controllers/board";
+import BoardController from "./controllers/boardController";
 
 const MIN_TASK_COUNT = 0;
 const MAX_TASK_COUNT = 30;
