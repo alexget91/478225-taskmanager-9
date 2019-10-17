@@ -2,6 +2,9 @@ import {Key, Position, render} from "../utils";
 import Task from "../components/task";
 import TaskEdit from "../components/task-edit";
 import Hashtag from "../components/hashtag";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/themes/light.css";
 
 const MAX_HASHTAG_COUNT = 5;
 
@@ -42,6 +45,14 @@ export default class TaskController {
   }
 
   init() {
+    flatpickr(this._taskEdit.getElement().querySelector(`.js-card-date`), {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._data.dueDate,
+      altFormat: `j F h:i K`,
+      enableTime: true,
+    });
+
     const onEscKeyDown = (evt) => {
       if (evt.key === Key.ESCAPE || evt.key === Key.ESCAPE_IE) {
         if (this._container.getElement().contains(this._taskEdit.getElement())) {
