@@ -61,7 +61,7 @@ export default class TaskEdit extends AbstractComponent {
                    <fieldset class="card__date-deadline js-date-deadline-fieldset" ${this._dueDate ? `` : `disabled`}> 
                     <label class="card__input-deadline-wrap">
                       <input
-                        class="card__date"
+                        class="card__date js-card-date"
                         type="text"
                         placeholder="23 September"
                         name="date"
